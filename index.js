@@ -33,13 +33,22 @@ async function run() {
             res.send(products)
         })
 
-        // POST
+        // POST API
         app.post('/products', async (req, res) => {
             const product = req.body;
             const result = await productCollection.insertOne(product)
             // console.log(`A document was inserted with the _id: ${result.insertedId}`);
             res.json(result)
 
+        })
+
+        // DELETE product api
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.json(result);
+            //console.log(result)
         })
 
         // POST API
@@ -67,7 +76,7 @@ async function run() {
             // console.log(result)
         })
 
-        // POSt review api
+        // POST review api
         app.post('/reviews', async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review)
@@ -93,7 +102,7 @@ async function run() {
 
         // admin UPDATE api
         app.put('/admin', async (req, res) => {
-            console.log(req.body)
+            //console.log(req.body)
             const filter = { email: req.body.email }
             const updateDoc = { $set: { role: 'admin' } }
             const result = await usersCollection.updateOne(filter, updateDoc)
@@ -114,6 +123,15 @@ async function run() {
             res.json({ admin: isAdmin })
         })
 
+        // status update
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = { $set: { status: req.body.status } }
+            const result = await ordersCollection.updateOne(filter, updateDoc)
+            res.json(result);
+            //console.log(result)
+        })
 
     }
     finally {
